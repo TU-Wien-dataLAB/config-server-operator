@@ -1,0 +1,84 @@
+# A CRD for the config server deployment.
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: datalab.tuwien.ac.at
+spec:
+  scope: Namespaced
+  group: tuwien.ac.at
+  names:
+    kind: ConfigServer
+    plural: configservers
+    singular: configserver
+    shortNames:
+      - cfg-server
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            metadata:
+              type: object
+              properties:
+                name:
+                  type: string
+                namespace:
+                  type: string
+            spec:
+              type: object
+              properties:
+                image:
+                  type: string
+                imagePullPolicy:
+                  type: string
+                containerPort:
+                  type: string
+                configMountPath:
+                  type: string
+                configSubPath:
+                  type: string
+
+---
+
+# A CRD for the key/value pairs of the config.
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: datalab.tuwien.ac.at
+spec:
+  scope: Namespaced
+  group: tuwien.ac.at
+  names:
+    kind: KeyValuePair
+    plural: keyvaluepairs
+    singular: keyvaluepair
+    shortNames:
+      - kvpair
+      - kvp
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            metadata:
+              type: object
+              properties:
+                name:
+                  type: string
+                namespace:
+                  type: string
+                config:
+                  type: string
+            spec:
+              type: object
+              properties:
+                key:
+                  type: string
+                value:
+                  type: object
