@@ -1,0 +1,13 @@
+apiVersion: datalab.tuwien.ac.at/v1
+kind: KeyValuePair
+metadata:
+  name: minimal-config-value-1
+  namespace: config-server
+spec:
+  config: minimal-config
+  key: test
+  value:
+    value1: some
+    value2:
+      sub:
+        subsub: 5

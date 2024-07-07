@@ -2,10 +2,10 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: datalab.tuwien.ac.at
+  name: configservers.datalab.tuwien.ac.at
 spec:
   scope: Namespaced
-  group: tuwien.ac.at
+  group: datalab.tuwien.ac.at
   names:
     kind: ConfigServer
     plural: configservers
@@ -20,13 +20,6 @@ spec:
         openAPIV3Schema:
           type: object
           properties:
-            metadata:
-              type: object
-              properties:
-                name:
-                  type: string
-                namespace:
-                  type: string
             spec:
               type: object
               properties:
@@ -35,10 +28,8 @@ spec:
                 imagePullPolicy:
                   type: string
                 containerPort:
-                  type: string
+                  type: integer
                 configMountPath:
-                  type: string
-                configSubPath:
                   type: string
 
 ---
@@ -47,10 +38,10 @@ spec:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: datalab.tuwien.ac.at
+  name: keyvaluepairs.datalab.tuwien.ac.at
 spec:
   scope: Namespaced
-  group: tuwien.ac.at
+  group: datalab.tuwien.ac.at
   names:
     kind: KeyValuePair
     plural: keyvaluepairs
@@ -66,19 +57,13 @@ spec:
         openAPIV3Schema:
           type: object
           properties:
-            metadata:
-              type: object
-              properties:
-                name:
-                  type: string
-                namespace:
-                  type: string
-                config:
-                  type: string
             spec:
               type: object
               properties:
+                config:
+                  type: string
                 key:
                   type: string
                 value:
+                  x-kubernetes-preserve-unknown-fields: true
                   type: object
