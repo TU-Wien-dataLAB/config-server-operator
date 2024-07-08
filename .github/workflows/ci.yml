@@ -32,11 +32,19 @@ jobs:
       - id: outputStep
         run: echo "changeDirs=${{ steps.changeDirsStep.outputs.all_changed_files }}" >> $GITHUB_OUTPUT
 
+  debug_output:
+    runs-on: ubuntu-latest
+    needs: changed-dirs
+    steps:
+      - name: test
+        run: |
+          echo "${{ needs.changed-dirs.outputs.changeDirs }}"
+
   docker:
     runs-on: ubuntu-latest
     needs:
       - changed-dirs
-    if: startsWith(needs.init.outputs.changeDirs, 'operator') || startsWith(needs.init.outputs.changeDirs, 'server') || startsWith(needs.init.outputs.changeDirs, '.github')
+    if: startsWith(needs.changed-dirs.outputs.changeDirs, 'operator') || startsWith(needs.changed-dirs.outputs.changeDirs, 'server')
     strategy:
       matrix:
         include:
@@ -76,7 +84,7 @@ jobs:
 
       - name: Build and push
         uses: docker/build-push-action@v6
-        if: startsWith(needs.init.outputs.changeDirs, matrix.directory)
+        if: startsWith(needs.changed-dirs.outputs.changeDirs, matrix.directory)
         with:
           context: ${{ matrix.directory }}
           file: ./${{ matrix.directory }}/Dockerfile
