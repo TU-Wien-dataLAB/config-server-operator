@@ -1,6 +1,5 @@
 import json
 import logging
-from typing import Optional
 
 import kopf
 import kubernetes
