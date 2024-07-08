@@ -4,7 +4,7 @@ metadata:
   name: minimal-config
   namespace: config-server
 spec:
-  image: config-server:latest
-  imagePullPolicy: Never
+  image: ghcr.io/tu-wien-datalab/config-server:main
+  imagePullPolicy: IfNotPresent
   containerPort: 80
   configMountPath: /var/lib/config-server
