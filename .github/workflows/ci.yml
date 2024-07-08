@@ -8,8 +8,7 @@ on:
       - "operator-v*"
       - "server-v*"
   pull_request:
-    branches:
-      - *
+    branches: '*'
 
 jobs:
   changed-dirs:
