@@ -1,0 +1,20 @@
+# Uncomment this if your project is hosted on GitHub:
+# github_url = "https://github.com/<user or organization>/<project>/"
+
+[version]
+current = "0.0.1"
+
+# Example of a semver regexp.
+# Make sure this matches current_version before
+# using tbump
+regex = '''
+  (?P<major>\d+)
+  \.
+  (?P<minor>\d+)
+  \.
+  (?P<patch>\d+)
+  '''
+
+[git]
+message_template = "Bump operator to {new_version}"
+tag_template = "operator-v{new_version}"

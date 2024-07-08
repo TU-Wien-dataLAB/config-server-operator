@@ -1,0 +1,85 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "operator-v*"
+      - "server-v*"
+  pull_request:
+    branches:
+      - *
+
+jobs:
+  changed-dirs:
+    runs-on: ubuntu-latest
+    outputs:
+      changeDirs: ${{ steps.outputStep.outputs.changeDirs }}
+    steps:
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Get changed dirs                  # To check if any files changed in a directory
+        id: changeDirsStep
+        uses: tj-actions/changed-files@v44
+        with:
+          dir_names: true
+          files: |
+            *
+      - id: outputStep
+        run: echo "::set-output name=changeDirs::${{ steps.changeDirsStep.outputs.all_changed_files }}"
+
+  docker:
+    runs-on: ubuntu-latest
+    needs:
+      - changed-dirs
+    if: startsWith(needs.init.outputs.changeDirs, 'operator') || startsWith(needs.init.outputs.changeDirs, 'server')
+    strategy:
+      matrix:
+        include:
+          - image: your-docker-registry/app1
+            dockerfile: operator/Dockerfile
+            directory: operator
+          - image: user/app2
+            dockerfile: server/Dockerfile
+            directory: server
+    steps:
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # list of Docker images to use as base name for tags
+          images: ${{ matrix.image }}
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=ref,event=branch
+            type=match,pattern=\w+-v(\d.+),group=1
+            type=ref,event=tag
+            type=sha
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        if: startsWith(needs.init.outputs.changeDirs, matrix.directory)
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name == 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
