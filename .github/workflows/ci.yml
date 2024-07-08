@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - changed-dirs
-    if: startsWith(needs.changed-dirs.outputs.changeDirs, 'operator') || startsWith(needs.changed-dirs.outputs.changeDirs, 'server')
+    if: contains(needs.changed-dirs.outputs.changeDirs, 'operator') || contains(needs.changed-dirs.outputs.changeDirs, 'server')
     strategy:
       matrix:
         include:
@@ -75,7 +75,7 @@ jobs:
 
       - name: Build and push
         uses: docker/build-push-action@v6
-        if: startsWith(needs.changed-dirs.outputs.changeDirs, matrix.directory)
+        if: contains(needs.changed-dirs.outputs.changeDirs, matrix.directory)
         with:
           context: ${{ matrix.directory }}
           file: ./${{ matrix.directory }}/Dockerfile
