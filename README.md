@@ -37,12 +37,12 @@ Install dependencies
 Add the CRDs to the cluster
 
 ```bash
-  kubectl apply -f operator/crd.yaml
+  kubectl apply -f opr/crd.yaml
 ```
 
 Run the operator
 
 ```bash
-  kopf run operator/operator.py --verbose
+  kopf run opr/operator.py --verbose
 ```
 

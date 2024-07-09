@@ -35,14 +35,16 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - changed-dirs
-    if: contains(needs.changed-dirs.outputs.changeDirs, 'operator') || contains(needs.changed-dirs.outputs.changeDirs, 'server')
+    if: contains(needs.changed-dirs.outputs.changeDirs, 'opr') || contains(needs.changed-dirs.outputs.changeDirs, 'srv')
     strategy:
       matrix:
         include:
           - image: ghcr.io/tu-wien-datalab/config-server-operator
-            directory: operator
+            directory: opr
+            version-pattern: operator-v(\d.+)
           - image: ghcr.io/tu-wien-datalab/config-server
-            directory: server
+            directory: srv
+            version-pattern: server-v(\d.+)
     steps:
       - name: Docker metadata
         id: meta
@@ -53,8 +55,7 @@ jobs:
           # generate Docker tags based on the following events/attributes
           tags: |
             type=ref,event=branch
-            type=match,pattern=\w+-v(\d.+),group=1
-            type=ref,event=tag
+            type=match,pattern=${{ matrix.pattern }},group=1
             type=sha
 
       - name: Checkout repository
