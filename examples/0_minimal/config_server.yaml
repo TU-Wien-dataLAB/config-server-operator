@@ -2,7 +2,7 @@ apiVersion: datalab.tuwien.ac.at/v1
 kind: ConfigServer
 metadata:
   name: minimal-config
-  namespace: config-server
+  namespace: config-server-operator
 spec:
   image: ghcr.io/tu-wien-datalab/config-server:main
   imagePullPolicy: IfNotPresent

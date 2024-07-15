@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-server-operator
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      application: config-server-operator
+  template:
+    metadata:
+      labels:
+        application: config-server-operator
+    spec:
+      serviceAccountName: config-server-service-account
+      containers:
+      - name: config-server-operator
+        image: ghcr.io/tu-wien-datalab/config-server-operator:main
