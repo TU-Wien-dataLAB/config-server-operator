@@ -2,7 +2,7 @@ apiVersion: datalab.tuwien.ac.at/v1
 kind: KeyValuePair
 metadata:
   name: minimal-config-value-1
-  namespace: config-server
+  namespace: config-server-operator
 spec:
   config: minimal-config
   key: test

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: config-server-operator
-  namespace: {{ .Values.namespace }}
+  namespace: "{{ .Values.namespace }}"
 spec:
   replicas: 1
   strategy:
@@ -18,4 +18,4 @@ spec:
       serviceAccountName: config-server-service-account
       containers:
       - name: config-server-operator
-        image: ghcr.io/tu-wien-datalab/config-server-operator:main
+        image: registry.datalab.tuwien.ac.at/config_server/operator:latest
