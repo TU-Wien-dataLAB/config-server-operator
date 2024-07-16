@@ -88,6 +88,9 @@ jobs:
 
   helm:
     runs-on: ubuntu-latest
+    needs:
+      - changed-dirs
+    if: contains(needs.changed-dirs.outputs.changeDirs, 'chart/config-server-operator')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -99,7 +102,7 @@ jobs:
         run: helm registry login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
 
       - name: Package Helm chart
-        run: helm package charts/config-server-operator --destination ./charts
+        run: helm package chart/config-server-operator --destination ./charts
 
       - name: Push Helm chart to OCI registry
-        run: helm push ./charts/config-server-operator-*.tgz oci://ghcr.io/tu-wien-datalab
+        run: helm push ./chart/config-server-operator-*.tgz oci://ghcr.io/tu-wien-datalab
