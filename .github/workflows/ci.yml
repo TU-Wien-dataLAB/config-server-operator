@@ -99,7 +99,7 @@ jobs:
         run: helm registry login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
 
       - name: Package Helm chart
-        run: helm package chart/config-server-operator --destination ./charts
+        run: helm package chart/config-server-operator --destination ./chart
 
       - name: Push Helm chart to OCI registry
         run: helm push ./chart/config-server-operator-*.tgz oci://ghcr.io/tu-wien-datalab
