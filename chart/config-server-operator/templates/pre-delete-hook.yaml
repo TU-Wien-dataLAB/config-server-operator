@@ -17,4 +17,5 @@ spec:
             - -c
             - |
               kubectl delete cfg-server --all -n {{ .Values.namespace }}
+              kubectl delete kvp --all -n {{ .Values.namespace }}
       restartPolicy: OnFailure

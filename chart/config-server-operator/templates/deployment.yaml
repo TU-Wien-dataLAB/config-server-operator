@@ -18,4 +18,4 @@ spec:
       serviceAccountName: config-server-service-account
       containers:
       - name: config-server-operator
-        image: registry.datalab.tuwien.ac.at/config_server/operator:latest
+        image: ghcr.io/tu-wien-datalab/config-server-operator:sha-ad9a4e7
