@@ -122,7 +122,7 @@ def delete_fn(meta, spec, **kwargs):
 
 
 def _get_config_map(config_name: str, namespace: str, logger: logging.Logger) -> tuple[V1ConfigMap | None, CoreV1Api]:
-    client = kubernetes.client.api_client.ApiClient(configuration=kubernetes.config.load_kube_config())
+    client = kubernetes.client.api_client.ApiClient(configuration=kubernetes.config.load_incluster_config())
     api = kubernetes.client.CoreV1Api(api_client=client)
     try:
         config_map = api.read_namespaced_config_map(name=f"{config_name}-values", namespace=namespace)
