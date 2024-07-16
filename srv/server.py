@@ -41,7 +41,7 @@ class KeyValueHandler(tornado.web.RequestHandler):
 def make_app(config_values: Path) -> tornado.web.Application:
     return tornado.web.Application(
         handlers=[
-            (r"/key/(?P<key>[\d\w]+)\/?", KeyValueHandler),
+            (r"/key/(?P<key>[\d\w.-]+)\/?", KeyValueHandler),
         ],
         # settings:
         config_values=config_values,
