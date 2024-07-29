@@ -1,7 +1,7 @@
 import kubernetes
-from kubernetes import watch
-from kubernetes.client import ApiClient, CustomObjectsApi, CoreV1Api, V1ConfigMap, V1Volume, V1Pod, ApiextensionsV1Api
 from kopf.testing import KopfRunner
+from kubernetes import watch
+from kubernetes.client import ApiClient, CustomObjectsApi, CoreV1Api, V1ConfigMap, V1Volume, V1Pod
 
 from . import random_namespace, operator_file
 from .test_crd import create_crd

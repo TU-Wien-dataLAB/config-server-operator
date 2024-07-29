@@ -1,9 +1,8 @@
 import os
 
-import pytest
 import kubernetes
-from kubernetes.client import ApiClient, ApiextensionsV1Api, V1CustomResourceDefinition
 from kubernetes import utils, watch
+from kubernetes.client import ApiClient, ApiextensionsV1Api, V1CustomResourceDefinition
 
 
 def _create_crd(client: ApiClient):

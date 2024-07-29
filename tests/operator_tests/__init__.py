@@ -1,8 +1,10 @@
 import os
 import uuid
-import pytest
+
 import kubernetes
-from kubernetes.client import ApiClient, CoreV1Api, V1Namespace, V1ObjectMeta, AppsV1Api, CustomObjectsApi, ApiextensionsV1Api
+import pytest
+from kubernetes.client import ApiClient, CoreV1Api, V1Namespace, V1ObjectMeta, AppsV1Api, CustomObjectsApi, \
+    ApiextensionsV1Api
 
 
 def delete_all(namespace, list_func, delete_func, patch_func):
