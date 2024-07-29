@@ -1,6 +1,6 @@
 import kubernetes
 from kubernetes import watch
-from kubernetes.client import ApiClient, CustomObjectsApi, CoreV1Api, V1ConfigMap, V1Volume, V1Pod
+from kubernetes.client import ApiClient, CustomObjectsApi, CoreV1Api, V1ConfigMap, V1Volume, V1Pod, ApiextensionsV1Api
 from kopf.testing import KopfRunner
 
 from . import random_namespace, operator_file
@@ -40,10 +40,10 @@ def test_config_server_custom_resource(random_namespace, operator_file):
         config_map_watch = watch.Watch()
         config_server_stream = config_server_watch.stream(custom_objects_api.list_namespaced_custom_object,
                                                           "datalab.tuwien.ac.at", "v1", random_namespace,
-                                                          "configservers")
+                                                          "configservers", timeout_seconds=30)
         pod_stream = pod_watch.stream(core_api.list_namespaced_pod, random_namespace, timeout_seconds=30)
         config_map_stream = config_map_watch.stream(core_api.list_namespaced_config_map, random_namespace,
-                                                    timeout_seconds=10)
+                                                    timeout_seconds=30)
 
         create_config_server(client, random_namespace)
 
