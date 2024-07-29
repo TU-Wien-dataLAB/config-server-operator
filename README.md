@@ -6,11 +6,19 @@
 
 This operator provides CRDs to create key/value pairs (`KeyValuePair`). The operator combines these configuration objects into a single `ConfigMap` and deploys a REST API that can be used to access the individual values with the corresponding keys.
 
+The operator is written in the [Kubernetes Operators Framework (Kopf)](https://kopf.readthedocs.io/en/stable/index.html#) while the HTTP server for the REST API is written in [Tornado](https://www.tornadoweb.org/en/stable/). The code for the operator is found in the `/opr` directory while the code for the Tornado server is located in the `/srv` directory.
+
+The `/tests` directory contains unit and integration tests for the server and operator. The `/examples` directory contains simple examples on how to use the custom resources to deploy a config server instance. The `/chart` directory contains the definitions for a [Helm](https://helm.sh/) chart.
 
 ## Deployment
 
 See [Kopf documentation](https://kopf.readthedocs.io/en/stable/deployment/). The Dockerfile for the deployment is part of this repository.
 
+This repository also contains a Helm chart which can be deployed with:
+
+```bash
+  TODO: how?
+```
 
 ## Run Locally
 
