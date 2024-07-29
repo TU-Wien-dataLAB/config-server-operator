@@ -39,12 +39,23 @@ def test_key_value_custom_resource_before_server(random_namespace, operator_file
 
     create_crd(client)
 
-    with KopfRunner(['run', '-A', '--verbose', operator_file]) as runner:
+    with KopfRunner(['run', '-n', random_namespace, '--verbose', operator_file]) as runner:
+        key_value_watch = watch.Watch()
+        config_server_watch = watch.Watch()
+        config_map_watch = watch.Watch()
+
+        key_value_stream = key_value_watch.stream(custom_objects_api.list_namespaced_custom_object,
+                                                  "datalab.tuwien.ac.at", "v1", random_namespace, "keyvaluepairs")
+        config_server_stream = config_server_watch.stream(custom_objects_api.list_namespaced_custom_object,
+                                                          "datalab.tuwien.ac.at", "v1", random_namespace,
+                                                          "configservers")
+        config_map_stream = config_map_watch.stream(core_api.list_namespaced_config_map, random_namespace,
+                                                    timeout_seconds=10)
+
         create_key_value_pair(client, random_namespace)
 
-        key_value_watch = watch.Watch()
         entered = False
-        for event in key_value_watch.stream(custom_objects_api.list_namespaced_custom_object, "datalab.tuwien.ac.at", "v1", random_namespace, "keyvaluepairs"):
+        for event in key_value_stream:
             assert event['type'] == "ADDED"
             obj = event['object']  # object is one of type return_type
 
@@ -55,9 +66,8 @@ def test_key_value_custom_resource_before_server(random_namespace, operator_file
 
         create_config_server(client, random_namespace)
 
-        config_server_watch = watch.Watch()
         entered = False
-        for event in config_server_watch.stream(custom_objects_api.list_namespaced_custom_object, "datalab.tuwien.ac.at", "v1", random_namespace, "configservers"):
+        for event in config_server_stream:
             assert event['type'] == "ADDED"
             obj = event['object']  # object is one of type return_type
 
@@ -66,9 +76,8 @@ def test_key_value_custom_resource_before_server(random_namespace, operator_file
             config_server_watch.stop()
         assert entered
 
-        config_map_watch = watch.Watch()
         entered = False
-        for event in config_map_watch.stream(core_api.list_namespaced_config_map, random_namespace, timeout_seconds=10):
+        for event in config_map_stream:
             assert event['type'] == "ADDED"
 
             obj = event['object']  # object is one of type return_type
@@ -98,13 +107,24 @@ def test_key_value_custom_resource_after_server(random_namespace, operator_file)
 
     create_crd(client)
 
-    with KopfRunner(['run', '-A', '--verbose', operator_file]) as runner:
+    with KopfRunner(['run', '-n', random_namespace, '--verbose', operator_file]) as runner:
+        key_value_watch = watch.Watch()
+        config_server_watch = watch.Watch()
+        config_map_watch = watch.Watch()
+
+        key_value_stream = key_value_watch.stream(custom_objects_api.list_namespaced_custom_object,
+                                                  "datalab.tuwien.ac.at", "v1", random_namespace, "keyvaluepairs")
+        config_server_stream = config_server_watch.stream(custom_objects_api.list_namespaced_custom_object,
+                                                          "datalab.tuwien.ac.at", "v1", random_namespace,
+                                                          "configservers")
+        config_map_stream = config_map_watch.stream(core_api.list_namespaced_config_map, random_namespace,
+                                                    timeout_seconds=10)
+
         # config-server
         create_config_server(client, random_namespace)
 
-        config_server_watch = watch.Watch()
         entered = False
-        for event in config_server_watch.stream(custom_objects_api.list_namespaced_custom_object, "datalab.tuwien.ac.at", "v1", random_namespace, "configservers"):
+        for event in config_server_stream:
             assert event['type'] == "ADDED"
             obj = event['object']  # object is one of type return_type
 
@@ -116,9 +136,8 @@ def test_key_value_custom_resource_after_server(random_namespace, operator_file)
         # key-value
         create_key_value_pair(client, random_namespace)
 
-        key_value_watch = watch.Watch()
         entered = False
-        for event in key_value_watch.stream(custom_objects_api.list_namespaced_custom_object, "datalab.tuwien.ac.at", "v1", random_namespace, "keyvaluepairs"):
+        for event in key_value_stream:
             assert event['type'] == "ADDED"
             obj = event['object']  # object is one of type return_type
 
@@ -128,9 +147,8 @@ def test_key_value_custom_resource_after_server(random_namespace, operator_file)
         assert entered
 
         # config map
-        config_map_watch = watch.Watch()
         entered = False
-        for event in config_map_watch.stream(core_api.list_namespaced_config_map, random_namespace, timeout_seconds=10):
+        for event in config_map_stream:
             assert event['type'] == "ADDED"
 
             obj = event['object']  # object is one of type return_type
@@ -151,4 +169,3 @@ def test_key_value_custom_resource_after_server(random_namespace, operator_file)
 
     assert runner.exit_code == 0
     assert runner.exception is None
-

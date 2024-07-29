@@ -34,12 +34,21 @@ def test_config_server_custom_resource(random_namespace, operator_file):
 
     create_crd(client)
 
-    with KopfRunner(['run', '-A', '--verbose', operator_file]) as runner:
+    with KopfRunner(['run', '-n', random_namespace, '--verbose', operator_file]) as runner:
+        config_server_watch = watch.Watch()
+        pod_watch = watch.Watch()
+        config_map_watch = watch.Watch()
+        config_server_stream = config_server_watch.stream(custom_objects_api.list_namespaced_custom_object,
+                                                          "datalab.tuwien.ac.at", "v1", random_namespace,
+                                                          "configservers")
+        pod_stream = pod_watch.stream(core_api.list_namespaced_pod, random_namespace, timeout_seconds=10)
+        config_map_stream = config_map_watch.stream(core_api.list_namespaced_config_map, random_namespace,
+                                                    timeout_seconds=10)
+
         create_config_server(client, random_namespace)
 
-        config_server_watch = watch.Watch()
         entered = False
-        for event in config_server_watch.stream(custom_objects_api.list_namespaced_custom_object, "datalab.tuwien.ac.at", "v1", random_namespace, "configservers"):
+        for event in config_server_stream:
             assert event['type'] == "ADDED"
             obj = event['object']  # object is one of type return_type
 
@@ -48,10 +57,8 @@ def test_config_server_custom_resource(random_namespace, operator_file):
             config_server_watch.stop()
         assert entered
 
-        pod_watch = watch.Watch()
         entered = False
-
-        for event in pod_watch.stream(core_api.list_namespaced_pod, random_namespace, timeout_seconds=10):
+        for event in pod_stream:
             assert event['type'] == "ADDED"
 
             obj = event['object']  # object is one of type return_type
@@ -73,9 +80,8 @@ def test_config_server_custom_resource(random_namespace, operator_file):
             pod_watch.stop()
         assert entered
 
-        config_map_watch = watch.Watch()
         entered = False
-        for event in config_map_watch.stream(core_api.list_namespaced_config_map, random_namespace, timeout_seconds=10):
+        for event in config_map_stream:
             assert event['type'] == "ADDED"
 
             obj = event['object']  # object is one of type return_type
