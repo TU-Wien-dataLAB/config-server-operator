@@ -24,7 +24,7 @@ class TestKeyHandler(AsyncHTTPTestCase):
         self.assertEqual(response.code, 404)
 
     def test_not_found(self):
-        response = self.fetch('/key/not-found')
+        response = self.fetch('/config/not-found')
         self.assertEqual(response.code, 404)
         # self.assertEqual(response.body, 'Hello, world')
 
@@ -32,7 +32,7 @@ class TestKeyHandler(AsyncHTTPTestCase):
         test_file = self.config_values / "test"
         test_file.write_text(json.dumps({"foo": "bar"}))
 
-        response = self.fetch('/key/test')
+        response = self.fetch('/config/test')
         self.assertEqual(response.code, 200)
         self.assertEqual(response.body.decode(), json.dumps({"foo": "bar"}))
 
@@ -42,7 +42,7 @@ class TestKeyHandler(AsyncHTTPTestCase):
         test_file = self.config_values / "test"
         test_file.write_text("something: not json")
 
-        response = self.fetch('/key/test')
+        response = self.fetch('/config/test')
         self.assertEqual(response.code, 400)
 
         test_file.unlink()

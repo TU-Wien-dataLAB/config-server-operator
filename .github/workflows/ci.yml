@@ -128,6 +128,9 @@ jobs:
 
   helm:
     runs-on: ubuntu-latest
+    needs:
+      - server-tests
+      - operator-tests
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
