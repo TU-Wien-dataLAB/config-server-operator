@@ -11,6 +11,7 @@ on:
     branches: '*'
 
 jobs:
+
   changed-dirs:
     runs-on: ubuntu-latest
     outputs:
@@ -124,3 +125,21 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  helm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+
+      - name: Login to GitHub Container Registry
+        run: helm registry login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Package Helm chart
+        run: helm package chart/config-server-operator --destination ./chart
+
+      - name: Push Helm chart to OCI registry
+        run: helm push ./chart/config-server-operator-*.tgz oci://ghcr.io/tu-wien-datalab

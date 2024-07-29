@@ -1,0 +1,24 @@
+# deletes crd ressoruces applied in the operators namespace
+# otherwise the deletion of the chart and namespace may stuck
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: delete-custom-resources
+  namespace: "{{ .Values.namespace }}"
+  annotations:
+    "helm.sh/hook": pre-delete
+spec:
+  template:
+    spec:
+      serviceAccountName: config-server-service-account
+      containers:
+        - name: delete-custom-resources
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl delete cfg-server --all -n {{ .Values.namespace }}
+              kubectl delete kvp --all -n {{ .Values.namespace }}
+
+      restartPolicy: OnFailure
