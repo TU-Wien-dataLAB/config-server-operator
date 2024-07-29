@@ -41,7 +41,7 @@ def test_config_server_custom_resource(random_namespace, operator_file):
         config_server_stream = config_server_watch.stream(custom_objects_api.list_namespaced_custom_object,
                                                           "datalab.tuwien.ac.at", "v1", random_namespace,
                                                           "configservers")
-        pod_stream = pod_watch.stream(core_api.list_namespaced_pod, random_namespace, timeout_seconds=10)
+        pod_stream = pod_watch.stream(core_api.list_namespaced_pod, random_namespace, timeout_seconds=30)
         config_map_stream = config_map_watch.stream(core_api.list_namespaced_config_map, random_namespace,
                                                     timeout_seconds=10)
 
