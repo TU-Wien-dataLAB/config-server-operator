@@ -6,7 +6,11 @@ from kubernetes.client import ApiClient, ApiextensionsV1Api, V1CustomResourceDef
 
 
 def _create_crd(client: ApiClient):
-    yaml_file = os.path.join(os.path.dirname(__file__), '../../opr/crd.yaml')
+    yaml_file = os.path.join(os.path.dirname(__file__), '../../chart/config-server-operator/crds/configservers.yaml')
+    assert os.path.exists(yaml_file)
+    utils.create_from_yaml(client, yaml_file)
+
+    yaml_file = os.path.join(os.path.dirname(__file__), '../../chart/config-server-operator/crds/keyvaluepairs.yaml')
     assert os.path.exists(yaml_file)
     utils.create_from_yaml(client, yaml_file)
 

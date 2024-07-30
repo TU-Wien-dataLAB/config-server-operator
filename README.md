@@ -41,13 +41,13 @@ Go to the project directory
 Install dependencies
 
 ```bash
-  pip install kopf
+  pip install kopf kubernetes
 ```
 
 Add the CRDs to the cluster
 
 ```bash
-  kubectl apply -f opr/crd.yaml
+  kubectl apply -f chart/config-server-operator/crds/
 ```
 
 Run the operator
