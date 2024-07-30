@@ -3,6 +3,8 @@
 
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2FTU-Wien-dataLAB%2Fconfig-server-operator%2Fmain%2Fpyproject.toml)
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/TU-Wien-dataLAB/config-server-operator/ci.yml?label=CI)
+
 
 This operator provides CRDs to create key/value pairs (`KeyValuePair`). The operator combines these configuration objects into a single `ConfigMap` and deploys a REST API that can be used to access the individual values with the corresponding keys.
 
