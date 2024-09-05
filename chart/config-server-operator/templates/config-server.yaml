@@ -1,0 +1,10 @@
+apiVersion: datalab.tuwien.ac.at/v1
+kind: ConfigServer
+metadata:
+  name: config-server
+  namespace: "{{ .Values.namespace }}"
+spec:
+  image: ghcr.io/tu-wien-datalab/config-server:main
+  imagePullPolicy: Always
+  containerPort: 80
+  configMountPath: /var/lib/config-server
