@@ -5,6 +5,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+import jmespath
 
 import tornado
 
@@ -37,11 +38,32 @@ class KeyValueHandler(tornado.web.RequestHandler):
         except FileNotFoundError:
             raise tornado.web.HTTPError(404, reason=f"Key '{key}' not found")
 
+    def post(self, key: str = None):
+        body = json.loads(self.request.body)
+
+        query = jmespath.compile(body.get('query', '*'))
+        directory: Path = self.settings['config_values']
+        response = {}
+
+        for json_file in directory.iterdir():
+            if json_file.is_file():
+                try:
+                    data = json.load(open(json_file, 'r'))
+                    matches = query.search(data)
+                    if matches:
+                        response[json_file.name] = matches
+                except json.decoder.JSONDecodeError:
+                    log.warning(f"Failed to load JSON from file {json_file}")
+                except Exception as e:
+                    log.exception(f"Error processing file {json_file}: {e}")
+
+        self.write(response)
+
 
 def make_app(config_values: Path) -> tornado.web.Application:
     return tornado.web.Application(
         handlers=[
-            (r"/config/(?P<key>[\d\w.-]+)\/?", KeyValueHandler),
+            (r"/config(?:/(?P<key>[\d\w.-]+))?/?", KeyValueHandler)
         ],
         # settings:
         config_values=config_values,
