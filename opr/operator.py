@@ -1,14 +1,24 @@
 import json
 import logging
+import os
 
 import kopf
 import kubernetes
 from kubernetes.client import ApiClient, CoreV1Api, AppsV1Api, CustomObjectsApi, V1ConfigMap, V1Service
 
 
+def load_kubernetes_config():
+    if 'KUBERNETES_SERVICE_HOST' in os.environ:
+        # We're running inside a Kubernetes cluster
+        return kubernetes.config.load_incluster_config()
+    else:
+        # We're running outside the cluster
+        return kubernetes.config.load_kube_config()
+
+
 @kopf.on.create('configserver')
 def create_fn(meta, spec, **kwargs):
-    client = ApiClient(configuration=kubernetes.config.load_incluster_config())
+    client = ApiClient(configuration=load_kubernetes_config())
     api = CoreV1Api(api_client=client)
     apps_api = AppsV1Api(api_client=client)
     crd_api = CustomObjectsApi(api_client=client)
@@ -100,7 +110,7 @@ def create_fn(meta, spec, **kwargs):
 
 @kopf.on.delete('configserver')
 def delete_fn(meta, spec, **kwargs):
-    client = ApiClient(configuration=kubernetes.config.load_incluster_config())
+    client = ApiClient(configuration=load_kubernetes_config())
     api = CoreV1Api(api_client=client)
     apps_api = AppsV1Api(api_client=client)
 
@@ -122,7 +132,7 @@ def delete_fn(meta, spec, **kwargs):
 
 
 def _get_config_map(config_name: str, namespace: str, logger: logging.Logger) -> tuple[V1ConfigMap | None, CoreV1Api]:
-    client = kubernetes.client.api_client.ApiClient(configuration=kubernetes.config.load_incluster_config())
+    client = kubernetes.client.api_client.ApiClient(configuration=load_kubernetes_config())
     api = kubernetes.client.CoreV1Api(api_client=client)
     try:
         config_map = api.read_namespaced_config_map(name=f"{config_name}-values", namespace=namespace)
